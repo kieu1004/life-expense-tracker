@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
 import ReactApexChart from 'react-apexcharts';
 import { generateEvents } from '../utils/data';
+import StatusAlert, { StatusAlertService } from 'preact-status-alert';
 
 class LineChart extends Component {
     constructor() {
@@ -27,11 +28,16 @@ class LineChart extends Component {
         const birthDate = e.target.value;
         const age = this.calculateAge(birthDate);
 
-        // Update startingAge based on calculated age
-        const startingAge = age;
+        // Ensure the calculated age is at least 0 and does not exceed 200
+        const startingAge = Math.max(0, Math.min(age, 200));
 
-        // Generate events up to age 60
-        const events = generateEvents(60);
+        // Display an alert if age is greater than or equal to 200
+        if (age >= 200) {
+            StatusAlertService.showError('Warning: Age exceeds or equals 200 years.');
+        }
+
+        // Generate events up to age 100
+        const events = generateEvents(100);
 
         // Update data generation logic
         const datasets = this.state.datasets.map((dataset) => ({
@@ -71,7 +77,8 @@ class LineChart extends Component {
             age--;
         }
 
-        return age;
+        // Ensure the calculated age is at least 0 and does not exceed 200
+        return Math.max(0, Math.min(age, 200));
     };
 
     handleEventClick = (event) => {
@@ -104,7 +111,12 @@ class LineChart extends Component {
                     return '';
                 },
             },
+            colors: ['#04D0A9'],
+            fill: {
+                type: 'gradient',
+            }
         };
+        
 
         return (
             <div className="max-w-screen-md mx-auto p-4">
@@ -120,6 +132,31 @@ class LineChart extends Component {
                 <div className="mb-4">
                     <span>Age: {this.state.age}</span>
                 </div>
+
+                <StatusAlert />
+                {/* Custom styles for the alert using Tailwind CSS */}
+                <style jsx>{`
+                    .status-alert {
+                        position: fixed;
+                        top: 1rem;
+                        right: 1rem;
+                        max-width: 50rem;
+                        z-index: 1000;
+                        background-color: #fef7ec;
+                        padding: 20px 40px;
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    .status-alert .status-alert-content {
+                        padding: 1rem;
+                    }
+
+                    .status-alert .status-alert-warning {
+                        color: #fff;
+                        margin-right: 10px; /* Margin to separate icon from text */
+                    }
+                `}</style>
 
                 <div className="bg-white p-4 rounded shadow-md w-full">
                     <ReactApexChart
