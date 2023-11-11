@@ -2,27 +2,23 @@ import { h, Component } from 'preact';
 import ReactApexChart from 'react-apexcharts';
 import { generateEvents } from '../utils/data';
 
-const labels = Array.from({ length: 60 - 22 + 1 }, (_, i) => (i + 22) + ' years old');
-
-
 class LineChart extends Component {
     constructor() {
         super();
         const initialAge = 0;
-        const startingAge = 22;
 
         this.state = {
-            labels,
+            labels: [],
             datasets: [
                 {
                     name: 'Expense',
-                    data: Array(60 - startingAge + 1).fill(0),
-                    events: generateEvents(60),
+                    data: [],
+                    events: [],
                 },
             ],
             birthDate: '',
             age: initialAge,
-            startingAge,
+            startingAge: initialAge,
             selectedEvent: null,
         };
     }
@@ -30,30 +26,38 @@ class LineChart extends Component {
     handleDateChange = (e) => {
         const birthDate = e.target.value;
         const age = this.calculateAge(birthDate);
-        const labels = Array.from({ length: 60 - age + 1 }, (_, i) => (i + age) + ' years old');
 
-        const events = generateEvents(age);
+        // Update startingAge based on calculated age
+        const startingAge = age;
+
+        // Generate events up to age 60
+        const events = generateEvents(60);
+
+        // Update data generation logic
         const datasets = this.state.datasets.map((dataset) => ({
             ...dataset,
             data: events.map((event, index) => {
                 if (event) {
                     return {
-                        x: age + index,
+                        x: startingAge + index,
                         y: event.expense,
                     };
                 }
                 return null;
             }).filter(dataPoint => dataPoint !== null),
             events,
-            events,
         }));
+
+        // Update labels
+        const labels = Array.from({ length: 60 - startingAge + 1 }, (_, i) => (i + startingAge) + ' years old');
 
         this.setState({
             birthDate,
             age,
+            startingAge,
             labels,
             datasets,
-            selectedEvent: null, // Reset selected event when date changes
+            selectedEvent: null,
         });
     };
 
