@@ -12,7 +12,7 @@ module.exports = (config, env, helpers, params = defaultParams) => {
         const plugins = loader.options.plugins;
 
         // Add tailwind css at the top.
-        plugins.unshift(require('tailwindcss'));
+        // plugins.unshift(require('tailwindcss'));
 
         // Add PurgeCSS only in production.
         if (env.production) {
