@@ -1,7 +1,7 @@
-export const generateEvents = (maxAge) => {
+export const generateEvents = (minAge, maxAge) => {
     const events = [
         // ... (events array)
-        { age: 1, icon: 'birthday-cake', description: 'First Birthday', expense: 50 },
+        { age: 1, icon: 'birthday-cake', description: 'First Birthday', expense: 10 },
         { age: 2, icon: 'baby', description: 'Learning to Walk', expense: 30 },
         { age: 5, icon: 'school', description: 'Start School', expense: 100 },
         { age: 7, icon: 'book', description: 'Learn to Read', expense: 20 },
@@ -24,7 +24,7 @@ export const generateEvents = (maxAge) => {
         { age: 60, icon: 'gold-watch', description: 'Golden Years', expense: 80 },
     ];
 
-    const filteredEvents = events.filter(event => event.age >= 0 && event.age <= maxAge);
+    const filteredEvents = events.filter(event => event.age >= minAge && event.age <= maxAge);
 
     return filteredEvents.map(event => ({
         ...event,

@@ -24,20 +24,27 @@ class LineChart extends Component {
         };
     }
 
+
+    // Calculates the age based on the entered birthdate.
     handleDateChange = (e) => {
         const birthDate = e.target.value;
         const age = this.calculateAge(birthDate);
 
-        // Ensure the calculated age is at least 0 and does not exceed 200
-        const startingAge = Math.max(0, Math.min(age, 200));
+        // Reset to vertical view on date change
+        this.setState({
+            isHorizontalView: false,
+        });
 
         // Display an alert if age is greater than or equal to 200
         if (age >= 200) {
             StatusAlertService.showError('Warning: Age exceeds or equals 200 years.');
         }
 
+        // Ensure the calculated age is at least 0 and does not exceed 200
+        const startingAge = Math.max(0, Math.min(age, 200));
+
         // Generate events up to age 100
-        const events = generateEvents(100);
+        const events = generateEvents(startingAge, 100);
 
         // Update data generation logic
         const datasets = this.state.datasets.map((dataset) => ({
@@ -64,7 +71,14 @@ class LineChart extends Component {
             labels,
             datasets,
             selectedEvent: null,
+            isHorizontalView: false,
         });
+    };
+
+    toggleViewMode = () => {
+        this.setState((prevState) => ({
+            isHorizontalView: !prevState.isHorizontalView,
+        }));
     };
 
     calculateAge = (birthDate) => {
@@ -86,6 +100,12 @@ class LineChart extends Component {
     };
 
     render() {
+        const containerStyles = this.state.isHorizontalView
+            ? { flexDirection: 'row' }
+            : { flexDirection: 'column' };
+
+        const buttonLabel = this.state.isHorizontalView ? 'Switch to Vertical View' : 'Switch to Horizontal View';
+
         const options = {
             xaxis: {
                 title: {
@@ -116,10 +136,10 @@ class LineChart extends Component {
                 type: 'gradient',
             }
         };
-        
+
 
         return (
-            <div className="max-w-screen-md mx-auto p-4">
+            <div className={`max-w-screen-md mx-auto p-4 ${this.state.isHorizontalView ? 'flex-row' : 'flex-col'}`}>
                 <label className="block mb-4">
                     Date of birth:
                     <input
@@ -132,6 +152,13 @@ class LineChart extends Component {
                 <div className="mb-4">
                     <span>Age: {this.state.age}</span>
                 </div>
+
+                <button
+                    onClick={this.toggleViewMode}
+                    className="border border-gray-300 p-2 rounded mt-2"
+                >
+                    {buttonLabel}
+                </button>
 
                 <StatusAlert />
                 {/* Custom styles for the alert using Tailwind CSS */}
@@ -158,7 +185,7 @@ class LineChart extends Component {
                     }
                 `}</style>
 
-                <div className="bg-white p-4 rounded shadow-md w-full">
+                <div className={`bg-white p-4 rounded shadow-md w-full ${this.state.isHorizontalView ? 'flex-row' : 'flex-col'}`}>
                     <ReactApexChart
                         options={options}
                         series={this.state.selectedEvent ? [{ data: this.state.selectedEvent.expense }] : this.state.datasets}
