@@ -1,9 +1,9 @@
 import { h } from 'preact';
-import style from './style.css';
 
 const Home = () => {
 	return (
-		<div class={style.home}>
+		<div class="bg-red-800 text-white p-4">
+			<h1 class="text-2xl">Hello Tailwind CSS in Preact!</h1>
 		</div>
 	);
 };
