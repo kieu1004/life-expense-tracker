@@ -35,7 +35,16 @@ class LineChart extends Component {
         const events = generateEvents(age);
         const datasets = this.state.datasets.map((dataset) => ({
             ...dataset,
-            data: events.map(event => event.expense),
+            data: events.map((event, index) => {
+                if (event) {
+                    return {
+                        x: age + index,
+                        y: event.expense,
+                    };
+                }
+                return null;
+            }).filter(dataPoint => dataPoint !== null),
+            events,
             events,
         }));
 
@@ -90,7 +99,7 @@ class LineChart extends Component {
                     }
                     return '';
                 },
-            },            
+            },
         };
 
         return (
