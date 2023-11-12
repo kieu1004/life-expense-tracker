@@ -5,6 +5,9 @@ import { generateEvents } from '../utils/data';
 import ChartControls from './ChartControl';
 
 class LineChart extends Component {
+
+
+    // Constructor initializes the state
     constructor() {
         super();
         const initialAge = 0;
@@ -22,13 +25,11 @@ class LineChart extends Component {
             age: initialAge,
             startingAge: initialAge,
             selectedEvent: null,
-            isHorizontalView: false,
         };
-
-        // Bind the toggleViewMode function to the component instance
-        this.toggleViewMode = this.toggleViewMode.bind(this);
     }
 
+
+    // Calculate age based on birthDate
     calculateAge = (birthDate) => {
         const today = new Date();
         const birth = new Date(birthDate);
@@ -43,14 +44,11 @@ class LineChart extends Component {
         return Math.max(0, Math.min(age, 200));
     };
 
+
+    // Handle changes in the birth date input
     handleDateChange = (e) => {
         const birthDate = e.target.value;
         const age = this.calculateAge(birthDate);
-
-        // Reset to vertical view on date change
-        this.setState({
-            isHorizontalView: false,
-        });
 
         // Display an alert if age is negative or greater than or equal to 200
         if (age < 0 || age >= 200) {
@@ -79,7 +77,7 @@ class LineChart extends Component {
             events,
         }));
 
-        // Update labels
+        // Update labels chart
         const labels = Array.from({ length: 60 - startingAge + 1 }, (_, i) => (i + startingAge) + ' years old');
 
         this.setState({
@@ -89,31 +87,18 @@ class LineChart extends Component {
             labels,
             datasets,
             selectedEvent: null,
-            isHorizontalView: false,
         });
     };
 
 
-    toggleViewMode() {
-        this.setState((prevState) => ({
-            isHorizontalView: !prevState.isHorizontalView,
-        }));
-    }
-
+    // Handle clicks on chart events
     handleEventClick = (event) => {
         this.setState({ selectedEvent: event });
     };
 
 
-
+    // Render the component
     render() {
-
-        const containerStyles = this.state.isHorizontalView
-            ? { flexDirection: 'row' }
-            : { flexDirection: 'column' };
-
-        const buttonLabel = this.state.isHorizontalView ? 'Vertical View' : 'Horizontal View';
-
         const options = {
             xaxis: {
                 title: {
@@ -145,11 +130,9 @@ class LineChart extends Component {
             }
         };
 
-
-
         return (
-            <div className={`max-w-screen-md mx-auto p-4 ${this.state.isHorizontalView ? 'flex-row' : 'flex-col'}`}>
-                <div className={`bg-white pt-4 rounded shadow-md w-full`} style={containerStyles}>
+            <div className={`max-w-screen-md mx-auto p-4 ${this.props.horizontal ? 'flex flex-col md:flex-row' : ''}`}>
+                <div className={`bg-white pt-4 rounded shadow-md w-full ${this.props.horizontal ? 'ml-4' : ''}`}>
                     <ReactApexChart
                         options={options}
                         series={this.state.selectedEvent ? [{ data: this.state.selectedEvent.expense }] : this.state.datasets}
@@ -158,15 +141,17 @@ class LineChart extends Component {
                     />
                 </div>
 
-                <ChartControls
-                    onChange={this.handleDateChange}
-                    age={this.state.age}
-                    toggleViewMode={this.toggleViewMode}
-                    buttonLabel={buttonLabel}
-                />
+                {!this.props.horizontal && (
+                    <div className="mt-4">
+                        <ChartControls
+                            onChange={this.handleDateChange}
+                            age={this.state.age}
+                            buttonLabel="Rotate"
+                        />
+                    </div>
+                )}
 
                 <StatusAlert />
-
                 <style jsx>{`
                     .status-alert {
                         position: fixed;
@@ -186,18 +171,7 @@ class LineChart extends Component {
 
                     .status-alert .status-alert-warning {
                         color: #fff;
-                        margin-right: 10px; /* Margin to separate icon from text */
-                    }
-
-                    @media (max-width: 768px) {
-                        // Adjust styles for smaller screens
-                        .flex-col {
-                            flex-direction: column;
-                        }
-
-                        .flex-row {
-                            flex-direction: row;
-                        }
+                        margin-right: 10px;
                     }
                 `}</style>
             </div>
