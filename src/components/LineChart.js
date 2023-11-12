@@ -2,8 +2,8 @@ import { h, Component } from 'preact';
 import ReactApexChart from 'react-apexcharts';
 import StatusAlert, { StatusAlertService } from 'preact-status-alert';
 import { generateEvents } from '../utils/data';
-import DatePicker from './DatePicker'
-import AgeDisplay from './AgeDisplay'
+import DatePicker from './DatePicker';
+import AgeDisplay from './AgeDisplay';
 
 class LineChart extends Component {
     constructor() {
@@ -25,6 +25,9 @@ class LineChart extends Component {
             selectedEvent: null,
             isHorizontalView: false,
         };
+
+        // Bind the toggleViewMode function to the component instance
+        this.toggleViewMode = this.toggleViewMode.bind(this);
     }
 
     calculateAge = (birthDate) => {
@@ -92,18 +95,18 @@ class LineChart extends Component {
     };
 
 
-    toggleViewMode = () => {
+    toggleViewMode() {
         this.setState((prevState) => ({
             isHorizontalView: !prevState.isHorizontalView,
         }));
-    };
+    }
 
     handleEventClick = (event) => {
         this.setState({ selectedEvent: event });
     };
 
 
-    
+
     render() {
 
         const containerStyles = this.state.isHorizontalView
