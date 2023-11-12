@@ -25,6 +25,7 @@ class LineChart extends Component {
             age: initialAge,
             startingAge: initialAge,
             selectedEvent: null,
+            horizontalMode: false,
         };
     }
 
@@ -97,8 +98,42 @@ class LineChart extends Component {
     };
 
 
+    // Handle toggle layout mode
+    toggleLayoutMode = () => {
+        this.setState((prevState) => {
+            const newMode = !prevState.horizontalMode;
+            const layoutModeText = newMode ? 'Horizontal' : 'Vertical';
+            StatusAlertService.showInfo(`Layout mode switched to ${layoutModeText}`);
+
+            return {
+                horizontalMode: newMode,
+            };
+        });
+    };
+
+    toggleBackLayoutMode = () => {
+        this.setState((prevState) => {
+            const newMode = !prevState.horizontalMode;
+            const layoutModeText = newMode ? 'Horizontal' : 'Vertical';
+            StatusAlertService.showInfo(`Layout mode switched back to ${layoutModeText}`);
+
+            return {
+                horizontalMode: newMode,
+            };
+        });
+    };
+
+
     // Render the component
     render() {
+
+        // For toggle layout mode
+        const { horizontalMode } = this.state;
+        const containerClassName = `max-w-screen-md mx-auto p-4 ${horizontalMode ? 'flex flex-col md:flex-row' : ''}`;
+        const chartContainerClassName = `bg-white pt-4 rounded shadow-md w-full ${horizontalMode ? 'ml-4' : ''}`;
+
+
+        // For line chart
         const options = {
             xaxis: {
                 title: {
@@ -131,22 +166,39 @@ class LineChart extends Component {
         };
 
         return (
-            <div className={`max-w-screen-md mx-auto p-4 ${this.props.horizontal ? 'flex flex-col md:flex-row' : ''}`}>
-                <div className={`bg-white pt-4 rounded shadow-md w-full ${this.props.horizontal ? 'ml-4' : ''}`}>
+            <div className={containerClassName}>
+                <div className={chartContainerClassName}>
                     <ReactApexChart
                         options={options}
-                        series={this.state.selectedEvent ? [{ data: this.state.selectedEvent.expense }] : this.state.datasets}
+                        series={
+                            this.state.selectedEvent
+                                ? [{ data: this.state.selectedEvent.expense }]
+                                : this.state.datasets
+                        }
                         type="area"
-                        height={400}
+                        height={horizontalMode ? 200 : 400}
                     />
                 </div>
 
-                {!this.props.horizontal && (
+                {!horizontalMode && (
                     <div className="mt-4">
                         <ChartControls
                             onChange={this.handleDateChange}
                             age={this.state.age}
                             buttonLabel="Rotate"
+                            onButtonClick={this.toggleLayoutMode}
+                        />
+                    </div>
+                )}
+
+                {horizontalMode && (
+                    <div className="mt-4">
+                        <ChartControls
+                            onChange={this.handleDateChange}
+                            age={this.state.age}
+                            horizontalMode={horizontalMode}
+                            buttonLabel="Back"
+                            onBackButtonClick={this.toggleBackLayoutMode}
                         />
                     </div>
                 )}
