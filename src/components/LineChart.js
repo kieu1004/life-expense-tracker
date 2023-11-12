@@ -1,7 +1,9 @@
 import { h, Component } from 'preact';
 import ReactApexChart from 'react-apexcharts';
-import { generateEvents } from '../utils/data';
 import StatusAlert, { StatusAlertService } from 'preact-status-alert';
+import { generateEvents } from '../utils/data';
+import DatePicker from './DatePicker'
+import AgeDisplay from './AgeDisplay'
 
 class LineChart extends Component {
     constructor() {
@@ -21,11 +23,24 @@ class LineChart extends Component {
             age: initialAge,
             startingAge: initialAge,
             selectedEvent: null,
+            isHorizontalView: false,
         };
     }
 
+    calculateAge = (birthDate) => {
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
 
-    // Calculates the age based on the entered birthdate.
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+
+        // Ensure the calculated age is at least 0 and does not exceed 200
+        return Math.max(0, Math.min(age, 200));
+    };
+
     handleDateChange = (e) => {
         const birthDate = e.target.value;
         const age = this.calculateAge(birthDate);
@@ -35,9 +50,10 @@ class LineChart extends Component {
             isHorizontalView: false,
         });
 
-        // Display an alert if age is greater than or equal to 200
-        if (age >= 200) {
-            StatusAlertService.showError('Warning: Age exceeds or equals 200 years.');
+        // Display an alert if age is negative or greater than or equal to 200
+        if (age < 0 || age >= 200) {
+            StatusAlertService.showError('Warning: Invalid age. Please enter a valid age.');
+            return;
         }
 
         // Ensure the calculated age is at least 0 and does not exceed 200
@@ -75,36 +91,26 @@ class LineChart extends Component {
         });
     };
 
+
     toggleViewMode = () => {
         this.setState((prevState) => ({
             isHorizontalView: !prevState.isHorizontalView,
         }));
     };
 
-    calculateAge = (birthDate) => {
-        const today = new Date();
-        const birth = new Date(birthDate);
-        let age = today.getFullYear() - birth.getFullYear();
-        const monthDiff = today.getMonth() - birth.getMonth();
-
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-            age--;
-        }
-
-        // Ensure the calculated age is at least 0 and does not exceed 200
-        return Math.max(0, Math.min(age, 200));
-    };
-
     handleEventClick = (event) => {
         this.setState({ selectedEvent: event });
     };
 
+
+    
     render() {
+
         const containerStyles = this.state.isHorizontalView
             ? { flexDirection: 'row' }
             : { flexDirection: 'column' };
 
-        const buttonLabel = this.state.isHorizontalView ? 'Switch to Vertical View' : 'Switch to Horizontal View';
+        const buttonLabel = this.state.isHorizontalView ? 'Vertical View' : 'Horizontal View';
 
         const options = {
             xaxis: {
@@ -138,30 +144,38 @@ class LineChart extends Component {
         };
 
 
+
         return (
             <div className={`max-w-screen-md mx-auto p-4 ${this.state.isHorizontalView ? 'flex-row' : 'flex-col'}`}>
-                <label className="block mb-4">
-                    Date of birth:
-                    <input
-                        type="date"
-                        className="border border-gray-300 p-2 rounded"
-                        onChange={this.handleDateChange}
+                <div className={`bg-white pt-4 rounded shadow-md w-full`} style={containerStyles}>
+                    <ReactApexChart
+                        options={options}
+                        series={this.state.selectedEvent ? [{ data: this.state.selectedEvent.expense }] : this.state.datasets}
+                        type="area"
+                        height={400}
                     />
-                </label>
-
-                <div className="mb-4">
-                    <span>Age: {this.state.age}</span>
                 </div>
 
-                <button
-                    onClick={this.toggleViewMode}
-                    className="border border-gray-300 p-2 rounded mt-2"
-                >
-                    {buttonLabel}
-                </button>
+                <div className={`pt-10 flex flex-col md:flex-row md:justify-between`}>
+                    <div>
+                        <DatePicker onChange={this.handleDateChange} />
+                        <AgeDisplay age={this.state.age} />
+                    </div>
+
+                    <div className={`flex items-center mt-4 md:mt-0`}>
+                        <div className={`ml-4`}>
+                            <button
+                                onClick={this.toggleViewMode}
+                                className={`border border-gray-300 rounded-lg px-4 py-2 min-w-[150px] bg-teal-500 text-white hover:bg-teal-700 focus:outline-none active:border-transparent transition-colors duration-300`}
+                            >
+                                {buttonLabel}
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <StatusAlert />
-                {/* Custom styles for the alert using Tailwind CSS */}
+
                 <style jsx>{`
                     .status-alert {
                         position: fixed;
@@ -183,16 +197,18 @@ class LineChart extends Component {
                         color: #fff;
                         margin-right: 10px; /* Margin to separate icon from text */
                     }
-                `}</style>
 
-                <div className={`bg-white p-4 rounded shadow-md w-full ${this.state.isHorizontalView ? 'flex-row' : 'flex-col'}`}>
-                    <ReactApexChart
-                        options={options}
-                        series={this.state.selectedEvent ? [{ data: this.state.selectedEvent.expense }] : this.state.datasets}
-                        type="area"
-                        height={350}
-                    />
-                </div>
+                    @media (max-width: 768px) {
+                        // Adjust styles for smaller screens
+                        .flex-col {
+                            flex-direction: column;
+                        }
+
+                        .flex-row {
+                            flex-direction: row;
+                        }
+                    }
+                `}</style>
             </div>
         );
     }
