@@ -2,8 +2,7 @@ import { h, Component } from 'preact';
 import ReactApexChart from 'react-apexcharts';
 import StatusAlert, { StatusAlertService } from 'preact-status-alert';
 import { generateEvents } from '../utils/data';
-import DatePicker from './DatePicker';
-import AgeDisplay from './AgeDisplay';
+import ChartControls from './ChartControl';
 
 class LineChart extends Component {
     constructor() {
@@ -159,23 +158,12 @@ class LineChart extends Component {
                     />
                 </div>
 
-                <div className={`pt-10 flex flex-col md:flex-row md:justify-between`}>
-                    <div>
-                        <DatePicker onChange={this.handleDateChange} />
-                        <AgeDisplay age={this.state.age} />
-                    </div>
-
-                    <div className={`flex items-center mt-4 md:mt-0`}>
-                        <div className={`ml-4`}>
-                            <button
-                                onClick={this.toggleViewMode}
-                                className={`border border-gray-300 rounded-lg px-4 py-2 min-w-[150px] bg-teal-500 text-white hover:bg-teal-700 focus:outline-none active:border-transparent transition-colors duration-300`}
-                            >
-                                {buttonLabel}
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <ChartControls
+                    onChange={this.handleDateChange}
+                    age={this.state.age}
+                    toggleViewMode={this.toggleViewMode}
+                    buttonLabel={buttonLabel}
+                />
 
                 <StatusAlert />
 
