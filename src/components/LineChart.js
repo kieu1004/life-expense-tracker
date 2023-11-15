@@ -129,8 +129,7 @@ class LineChart extends Component {
 
         // For toggle layout mode
         const { horizontalMode } = this.state;
-        const containerClassName = `max-w-screen-md mx-auto p-4 ${horizontalMode ? 'flex flex-col md:flex-row' : ''}`;
-        const chartContainerClassName = `bg-white pt-4 rounded shadow-md w-full ${horizontalMode ? 'ml-4' : ''}`;
+        const containerClassName = `${horizontalMode ? '!rotate-90 !bg-white-500 !r-[30px] !l-[0px] !mt-[240px] !b-[0px] mt-[100px]' : 'mx-[20px]'}`;
 
 
         // For line chart
@@ -167,18 +166,19 @@ class LineChart extends Component {
 
         return (
             <div className={containerClassName}>
-                <div className={chartContainerClassName}>
-                    <ReactApexChart
-                        options={options}
-                        series={
-                            this.state.selectedEvent
-                                ? [{ data: this.state.selectedEvent.expense }]
-                                : this.state.datasets
-                        }
-                        type="area"
-                        height={horizontalMode ? 200 : 400}
-                    />
-                </div>
+                <ReactApexChart
+                    className={horizontalMode ? '' : ''}
+                    options={options}
+                    series={
+                        this.state.selectedEvent
+                            ? [{ data: this.state.selectedEvent.expense }]
+                            : this.state.datasets
+                    }
+                    type="area"
+                    width={horizontalMode ? '100%' : '100%'}
+                    height={horizontalMode ? '100%' : '100%'}
+
+                />
 
                 {!horizontalMode && (
                     <div className="mt-4">
@@ -192,7 +192,7 @@ class LineChart extends Component {
                 )}
 
                 {horizontalMode && (
-                    <div className="mt-4">
+                    <div className="mt-4 mx-[400px]">
                         <ChartControls
                             onChange={this.handleDateChange}
                             age={this.state.age}
@@ -202,6 +202,7 @@ class LineChart extends Component {
                         />
                     </div>
                 )}
+
 
                 <StatusAlert />
                 <style jsx>{`

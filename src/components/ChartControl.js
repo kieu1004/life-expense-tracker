@@ -7,30 +7,28 @@ class ChartControls extends Component {
         const { onChange, age, horizontalMode, onButtonClick, onBackButtonClick } = this.props;
 
         return (
-            <div className={`pt-10 flex flex-col md:flex-row md:justify-between`}>
-                <div>
+            <div className={`pt-5 flex flex-column items-center justify-center`}>
+                <div className={`md:items-center`}>
                     <DatePicker id="datepicker" onChange={onChange} />
                     <AgeDisplay age={age} />
                 </div>
 
-                <div className={`flex items-center mt-4 md:mt-0`}>
-                    <div className={`ml-4`}>
-                        {horizontalMode ? (
-                            <button
-                                className={`border border-gray-300 rounded-lg px-4 py-2 min-w-[150px] bg-teal-500 text-white hover:bg-teal-700 focus:outline-none active:border-transparent transition-colors duration-300`}
-                                onClick={onBackButtonClick}
-                            >
-                                Back
-                            </button>
-                        ) : (
-                            <button
-                                className={`border border-gray-300 rounded-lg px-4 py-2 min-w-[150px] bg-teal-500 text-white hover:bg-teal-700 focus:outline-none active:border-transparent transition-colors duration-300`}
-                                onClick={onButtonClick}
-                            >
-                                Rotate
-                            </button>
-                        )}
-                    </div>
+                <div className={`items-center ml-5`}>
+                    {horizontalMode ? (
+                        <button
+                            className={`border border-gray-300 rounded-lg px-4 py-2 md:min-w-[30px] bg-teal-500 text-white hover:bg-teal-700 focus:outline-none active:border-transparent transition-colors duration-300 center`}
+                            onClick={onBackButtonClick}
+                        >
+                            Back
+                        </button>
+                    ) : (
+                        <button
+                            className={`border border-gray-300 rounded-lg px-4 py-2 md:min-w-[30px] bg-teal-500 text-white hover:bg-teal-700 focus:outline-none active:border-transparent transition-colors duration-300 center`}
+                            onClick={onButtonClick}
+                        >
+                            Rotate
+                        </button>
+                    )}
                 </div>
             </div>
         );

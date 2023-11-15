@@ -3,7 +3,7 @@ import { h, Component } from 'preact';
 class DatePicker extends Component {
     render() {
         return (
-            <label className="block mb-4 text-2xl font-bold">
+            <label className="block mb-4 text-xl font-bold">
                 Date of birth:
                 <input
                     type="date"
@@ -13,6 +13,14 @@ class DatePicker extends Component {
                     onChange={this.props.onChange}
                     placeholder="Select a date"
                 />
+                <style jsx>{`
+                    @media screen and (orientation: landscape) {
+                        input[type="date"] {
+                            transform: rotate(0deg);
+                            transform-origin: 50% 50%;
+                        }
+                    }
+                `}</style>
             </label>
         );
     }
