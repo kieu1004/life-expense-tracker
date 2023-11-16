@@ -61,7 +61,7 @@ class LineChart extends Component {
         const startingAge = Math.max(0, Math.min(age, 200));
 
         // Generate events up to age 100
-        const events = generateEvents(startingAge, 100);
+        const events = generateEvents(startingAge, startingAge + 10);
 
         // Update data generation logic
         const datasets = this.state.datasets.map((dataset) => ({
@@ -105,8 +105,29 @@ class LineChart extends Component {
             const layoutModeText = newMode ? 'Horizontal' : 'Vertical';
             StatusAlertService.showInfo(`Layout mode switched to ${layoutModeText}`);
 
+            // Calculate events is startingAge + 10 when rotating
+            const maxAge = newMode ? 100 : this.state.startingAge + 10;
+            const events = generateEvents(this.state.startingAge, maxAge);
+
+            // Update data generation logic
+            const datasets = this.state.datasets.map((dataset) => ({
+                ...dataset,
+                data: events.map((event, index) => {
+                    if (event) {
+                        return {
+                            x: this.state.startingAge + index,
+                            y: event.expense,
+                        };
+                    }
+                    return null;
+                }).filter(dataPoint => dataPoint !== null),
+                events,
+            }));
+
             return {
                 horizontalMode: newMode,
+                datasets,
+                selectedEvent: null,
             };
         });
     };
@@ -117,8 +138,28 @@ class LineChart extends Component {
             const layoutModeText = newMode ? 'Horizontal' : 'Vertical';
             StatusAlertService.showInfo(`Layout mode switched back to ${layoutModeText}`);
 
+            // Calculate events up to 100 years when pressing "Back"
+            const events = generateEvents(this.state.startingAge, this.state.startingAge + 15);
+
+            // Update data generation logic
+            const datasets = this.state.datasets.map((dataset) => ({
+                ...dataset,
+                data: events.map((event, index) => {
+                    if (event) {
+                        return {
+                            x: this.state.startingAge + index,
+                            y: event.expense,
+                        };
+                    }
+                    return null;
+                }).filter(dataPoint => dataPoint !== null),
+                events,
+            }));
+
             return {
                 horizontalMode: newMode,
+                datasets,
+                selectedEvent: null,
             };
         });
     };
