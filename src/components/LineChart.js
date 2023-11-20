@@ -170,7 +170,7 @@ class LineChart extends Component {
 
         // For toggle layout mode
         const { horizontalMode } = this.state;
-        const containerClassName = `${horizontalMode ? '!rotate-90 !bg-white-500 !r-[30px] !l-[0px] !mt-[240px] !b-[0px] mt-[100px]' : 'mx-[20px]'}`;
+        const containerClassName = `${horizontalMode ? '!rotate-90 !bg-white-500 !r-[0px] !l-[0px] !b-[0px] !b-[0px] !mt-[270px]' : ''}`;
 
 
         // For line chart
@@ -216,7 +216,7 @@ class LineChart extends Component {
                             : this.state.datasets
                     }
                     type="area"
-                    width={horizontalMode ? '100%' : '100%'}
+                    width={horizontalMode ? '98%' : '98%'}
                     height={horizontalMode ? '100%' : '100%'}
 
                 />
@@ -245,7 +245,7 @@ class LineChart extends Component {
                 )}
 
 
-                <StatusAlert />
+                {/* <StatusAlert /> */}
                 <style jsx>{`
                     .status-alert {
                         position: fixed;

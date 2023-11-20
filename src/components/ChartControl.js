@@ -10,7 +10,7 @@ class ChartControls extends Component {
             <div className={`pt-5 flex flex-column items-center justify-center`}>
                 <div className={`md:items-center`}>
                     <DatePicker id="datepicker" onChange={onChange} />
-                    <AgeDisplay age={age} />
+                    {/* <AgeDisplay age={age} /> */}
                 </div>
 
                 <div className={`items-center ml-5`}>
