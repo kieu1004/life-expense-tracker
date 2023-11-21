@@ -25,9 +25,11 @@ class LineChart extends Component {
             age: initialAge,
             startingAge: initialAge,
             selectedEvent: null,
-            horizontalMode: false,
+            chartStyle: {},
         };
     }
+
+
 
 
     // Calculate age based on birthDate
@@ -46,6 +48,8 @@ class LineChart extends Component {
     };
 
 
+
+
     // Handle changes in the birth date input
     handleDateChange = (e) => {
         const birthDate = e.target.value;
@@ -60,8 +64,12 @@ class LineChart extends Component {
         // Ensure the calculated age is at least 0 and does not exceed 200
         const startingAge = Math.max(0, Math.min(age, 200));
 
-        // Generate events up to age 100
-        const events = generateEvents(startingAge, startingAge + 10);
+        // Generate events up to age 100 if mobile, otherwise up to startingAge + 10
+        const isPortraitMode = window.innerWidth <= 600;
+        console.log("Hi", startingAge)
+        console.log("Hi", isPortraitMode)
+        console.log("Hi", window.innerWidth)
+        const events = generateEvents(startingAge, isPortraitMode ? startingAge + 10 : 100);
 
         // Update data generation logic
         const datasets = this.state.datasets.map((dataset) => ({
@@ -79,7 +87,7 @@ class LineChart extends Component {
         }));
 
         // Update labels chart
-        const labels = Array.from({ length: 60 - startingAge + 1 }, (_, i) => (i + startingAge) + ' years old');
+        const labels = Array.from({ length: 100 - startingAge + 1 }, (_, i) => (i + startingAge) + ' years old');
 
         this.setState({
             birthDate,
@@ -89,7 +97,76 @@ class LineChart extends Component {
             datasets,
             selectedEvent: null,
         });
+
+
+        // Update chart style based on window width
+        this.handleWindowResize();
     };
+
+
+
+
+    // Handle window resize
+    handleWindowResize = () => {
+        const isPortraitMode = window.innerWidth <= 600;
+        const additionalWidth = isPortraitMode ? 50 : 0;
+
+        // Update chart style
+        this.setState({
+            chartStyle: {
+                width: `calc(100% + ${additionalWidth}px)`,
+                // backgroundColor: isPortraitMode ? '#FF0000' : 'transparent',
+            }
+        });
+
+        // Recalculate events and update the chart data
+        const startingAge = this.state.startingAge;
+        console.log("Hello", startingAge)
+        console.log("Hello", isPortraitMode)
+        console.log("Hello", window.innerWidth)
+        const events = generateEvents(startingAge, isPortraitMode ? startingAge + 10 : 100);
+
+        const datasets = this.state.datasets.map((dataset) => ({
+            ...dataset,
+            data: events.map((event, index) => {
+                if (event) {
+                    return {
+                        x: startingAge + index,
+                        y: event.expense,
+                    };
+                }
+                return null;
+            }).filter(dataPoint => dataPoint !== null),
+            events,
+        }));
+
+        // Update labels chart
+        const labels = Array.from({ length: isPortraitMode ? 61 : 11 }, (_, i) => (i + startingAge) + ' years old');
+
+        this.setState({
+            labels,
+            datasets,
+        });
+    };
+
+
+
+
+    componentDidMount() {
+        // Add event listener for window resize
+        window.addEventListener('resize', this.handleWindowResize);
+
+        // Initial resize check
+        this.handleWindowResize();
+    }
+
+    componentWillUnmount() {
+        // Remove event listener when component is unmounted
+        window.removeEventListener('resize', this.handleWindowResize);
+    }
+
+
+
 
 
     // Handle clicks on chart events
@@ -98,82 +175,10 @@ class LineChart extends Component {
     };
 
 
-    // Handle toggle layout mode
-    toggleLayoutMode = () => {
-        this.setState((prevState) => {
-            const newMode = !prevState.horizontalMode;
-            const layoutModeText = newMode ? 'Horizontal' : 'Vertical';
-            StatusAlertService.showInfo(`Layout mode switched to ${layoutModeText}`);
-
-            // Calculate events is startingAge + 10 when rotating
-            const maxAge = newMode ? 100 : this.state.startingAge + 10;
-            const events = generateEvents(this.state.startingAge, maxAge);
-
-            // Update data generation logic
-            const datasets = this.state.datasets.map((dataset) => ({
-                ...dataset,
-                data: events.map((event, index) => {
-                    if (event) {
-                        return {
-                            x: this.state.startingAge + index,
-                            y: event.expense,
-                        };
-                    }
-                    return null;
-                }).filter(dataPoint => dataPoint !== null),
-                events,
-            }));
-
-            return {
-                horizontalMode: newMode,
-                datasets,
-                selectedEvent: null,
-            };
-        });
-    };
-
-    toggleBackLayoutMode = () => {
-        this.setState((prevState) => {
-            const newMode = !prevState.horizontalMode;
-            const layoutModeText = newMode ? 'Horizontal' : 'Vertical';
-            StatusAlertService.showInfo(`Layout mode switched back to ${layoutModeText}`);
-
-            // Calculate events up to 100 years when pressing "Back"
-            const events = generateEvents(this.state.startingAge, this.state.startingAge + 15);
-
-            // Update data generation logic
-            const datasets = this.state.datasets.map((dataset) => ({
-                ...dataset,
-                data: events.map((event, index) => {
-                    if (event) {
-                        return {
-                            x: this.state.startingAge + index,
-                            y: event.expense,
-                        };
-                    }
-                    return null;
-                }).filter(dataPoint => dataPoint !== null),
-                events,
-            }));
-
-            return {
-                horizontalMode: newMode,
-                datasets,
-                selectedEvent: null,
-            };
-        });
-    };
 
 
-    // Render the component
+
     render() {
-
-        // For toggle layout mode
-        const { horizontalMode } = this.state;
-        const containerClassName = `${horizontalMode ? '!rotate-90 !bg-white-500 !r-[0px] !l-[0px] !b-[0px] !b-[0px] !mt-[270px]' : ''}`;
-
-
-        // For line chart
         const options = {
             xaxis: {
                 title: {
@@ -206,9 +211,8 @@ class LineChart extends Component {
         };
 
         return (
-            <div className={containerClassName}>
+            <div style={this.state.chartStyle}>
                 <ReactApexChart
-                    className={horizontalMode ? '' : ''}
                     options={options}
                     series={
                         this.state.selectedEvent
@@ -216,58 +220,14 @@ class LineChart extends Component {
                             : this.state.datasets
                     }
                     type="area"
-                    width={horizontalMode ? '98%' : '98%'}
-                    height={horizontalMode ? '100%' : '100%'}
-
                 />
 
-                {!horizontalMode && (
-                    <div className="mt-4">
-                        <ChartControls
-                            onChange={this.handleDateChange}
-                            age={this.state.age}
-                            buttonLabel="Rotate"
-                            onButtonClick={this.toggleLayoutMode}
-                        />
-                    </div>
-                )}
-
-                {horizontalMode && (
-                    <div className="mt-4 mx-[400px]">
-                        <ChartControls
-                            onChange={this.handleDateChange}
-                            age={this.state.age}
-                            horizontalMode={horizontalMode}
-                            buttonLabel="Back"
-                            onBackButtonClick={this.toggleBackLayoutMode}
-                        />
-                    </div>
-                )}
-
-
-                {/* <StatusAlert /> */}
-                <style jsx>{`
-                    .status-alert {
-                        position: fixed;
-                        top: 1rem;
-                        right: 1rem;
-                        max-width: 50rem;
-                        z-index: 1000;
-                        background-color: #fef7ec;
-                        padding: 20px 40px;
-                        display: flex;
-                        align-items: center;
-                    }
-
-                    .status-alert .status-alert-content {
-                        padding: 1rem;
-                    }
-
-                    .status-alert .status-alert-warning {
-                        color: #fff;
-                        margin-right: 10px;
-                    }
-                `}</style>
+                <div className="mt-4">
+                    <ChartControls
+                        onChange={this.handleDateChange}
+                        age={this.state.age}
+                    />
+                </div>
             </div>
         );
     }
