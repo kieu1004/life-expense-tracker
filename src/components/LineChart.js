@@ -114,37 +114,13 @@ class LineChart extends Component {
         this.setState({
             chartStyle: {
                 width: `calc(100% + ${additionalWidth}px)`,
+                height: `calc(100% + ${additionalWidth}px)`,
                 // backgroundColor: isPortraitMode ? '#FF0000' : 'transparent',
             }
         });
-
-        // Recalculate events and update the chart data
-        // const startingAge = this.state.startingAge;
-        // const events = generateEvents(startingAge, isPortraitMode ? startingAge + 10 : 100);
-
-        // const datasets = this.state.datasets.map((dataset) => ({
-        //     ...dataset,
-        //     data: events.map((event, index) => {
-        //         if (event) {
-        //             return {
-        //                 x: startingAge + index,
-        //                 y: event.expense,
-        //             };
-        //         }
-        //         return null;
-        //     }).filter(dataPoint => dataPoint !== null),
-        //     events,
-        // }));
-
-        // // Update labels chart
-        // const labels = Array.from({ length: isPortraitMode ? 60 : 11 }, (_, i) => (i + startingAge) + ' years old');
-
-        // this.setState({
-        //     labels,
-        //     datasets,
-        // });
     };
 
+    
 
 
 

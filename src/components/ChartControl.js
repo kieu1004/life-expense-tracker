@@ -1,15 +1,18 @@
 import { h, Component } from 'preact';
 import DatePicker from './DatePicker';
-import AgeDisplay from './AgeDisplay';
+import FilterControl from './FilterControl';
 
 class ChartControls extends Component {
     render() {
-        const { onChange, birthDate} = this.props;
+        const { onChange, birthDate } = this.props;
 
         return (
-            <div className={`pt-2 bg-white pb-10`}>
+            <div className={`pt-2 bg-white pb-10 flex flex-column items-center justify-center mx-[30px]`}>
                 <div className={`md:items-center`}>
-                    <DatePicker id="datepicker" onChange={onChange} birthDate={birthDate}/>
+                    <DatePicker id="datepicker" onChange={onChange} birthDate={birthDate} />
+                </div>
+                <div className={`ml-10`}>
+                    <FilterControl id="filter" />
                 </div>
             </div>
         );
