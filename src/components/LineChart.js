@@ -66,10 +66,9 @@ class LineChart extends Component {
 
         // Generate events up to age 100 if mobile, otherwise up to startingAge + 10
         const isPortraitMode = window.innerWidth <= 600;
-        console.log("Hi", startingAge)
-        console.log("Hi", isPortraitMode)
-        console.log("Hi", window.innerWidth)
-        const events = generateEvents(startingAge, isPortraitMode ? startingAge + 10 : 100);
+        // const events = generateEvents(startingAge, isPortraitMode ? startingAge + 10 : 100);
+        const events = generateEvents(startingAge, isPortraitMode ? 100 : 100);
+
 
         // Update data generation logic
         const datasets = this.state.datasets.map((dataset) => ({
@@ -120,33 +119,30 @@ class LineChart extends Component {
         });
 
         // Recalculate events and update the chart data
-        const startingAge = this.state.startingAge;
-        console.log("Hello", startingAge)
-        console.log("Hello", isPortraitMode)
-        console.log("Hello", window.innerWidth)
-        const events = generateEvents(startingAge, isPortraitMode ? startingAge + 10 : 100);
+        // const startingAge = this.state.startingAge;
+        // const events = generateEvents(startingAge, isPortraitMode ? startingAge + 10 : 100);
 
-        const datasets = this.state.datasets.map((dataset) => ({
-            ...dataset,
-            data: events.map((event, index) => {
-                if (event) {
-                    return {
-                        x: startingAge + index,
-                        y: event.expense,
-                    };
-                }
-                return null;
-            }).filter(dataPoint => dataPoint !== null),
-            events,
-        }));
+        // const datasets = this.state.datasets.map((dataset) => ({
+        //     ...dataset,
+        //     data: events.map((event, index) => {
+        //         if (event) {
+        //             return {
+        //                 x: startingAge + index,
+        //                 y: event.expense,
+        //             };
+        //         }
+        //         return null;
+        //     }).filter(dataPoint => dataPoint !== null),
+        //     events,
+        // }));
 
-        // Update labels chart
-        const labels = Array.from({ length: isPortraitMode ? 61 : 11 }, (_, i) => (i + startingAge) + ' years old');
+        // // Update labels chart
+        // const labels = Array.from({ length: isPortraitMode ? 60 : 11 }, (_, i) => (i + startingAge) + ' years old');
 
-        this.setState({
-            labels,
-            datasets,
-        });
+        // this.setState({
+        //     labels,
+        //     datasets,
+        // });
     };
 
 
@@ -225,7 +221,7 @@ class LineChart extends Component {
                 <div className="mt-4">
                     <ChartControls
                         onChange={this.handleDateChange}
-                        age={this.state.age}
+                        birthDate={this.state.birthDate}
                     />
                 </div>
             </div>
