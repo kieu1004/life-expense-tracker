@@ -13,10 +13,10 @@ class FilterControl extends Component {
 
         return (
             <label className="block text-l font-bold">
-                Filter:
                 <Select
                     options={options}
-                    className="font-normal outline-none bg-white min-w-[100px] p-2 "
+                    className="font-normal outline-none bg-white min-w-[150px] p-2 "
+                    placeholder="Filter"
                 />
             </label>
         );

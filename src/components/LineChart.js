@@ -1,17 +1,13 @@
 import { h, Component } from 'preact';
 import ReactApexChart from 'react-apexcharts';
-import StatusAlert, { StatusAlertService } from 'preact-status-alert';
-import { generateEvents } from '../utils/data';
+import { calculateAge, data, generateEventsByMonth, generateEventsByYear } from '../utils/data'
 import ChartControls from './ChartControl';
 
 class LineChart extends Component {
 
-
     // Constructor initializes the state
     constructor() {
         super();
-        const initialAge = 0;
-
         this.state = {
             labels: [],
             datasets: [
@@ -21,54 +17,33 @@ class LineChart extends Component {
                     events: [],
                 },
             ],
-            birthDate: '',
-            age: initialAge,
-            startingAge: initialAge,
             selectedEvent: null,
             chartStyle: {},
         };
     }
 
-
-
-
-    // Calculate age based on birthDate
-    calculateAge = (birthDate) => {
-        const today = new Date();
-        const birth = new Date(birthDate);
-        let age = today.getFullYear() - birth.getFullYear();
-        const monthDiff = today.getMonth() - birth.getMonth();
-
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-            age--;
-        }
-
-        // Ensure the calculated age is at least 0 and does not exceed 200
-        return Math.max(0, Math.min(age, 200));
-    };
-
-
-
-
-    // Handle changes in the birth date input
     handleDateChange = (e) => {
         const birthDate = e.target.value;
-        const age = this.calculateAge(birthDate);
+        const selectedDate = new Date(birthDate);
+        const age = calculateAge(birthDate);
+        const monthStart = 1;
 
-        // Display an alert if age is negative or greater than or equal to 200
-        if (age < 0 || age >= 200) {
-            StatusAlertService.showError('Warning: Invalid age. Please enter a valid age.');
-            return;
-        }
+        const dayOfBirth = selectedDate.getDate();
+        const monthOfBirth = selectedDate.getMonth() + 1;
+        const yearOfBirth = selectedDate.getFullYear();
 
-        // Ensure the calculated age is at least 0 and does not exceed 200
-        const startingAge = Math.max(0, Math.min(age, 200));
+        const currentYear = new Date().getFullYear();
+        const targetAge = 100;
+        const endYear = currentYear + (targetAge - age);
 
-        // Generate events up to age 100 if mobile, otherwise up to startingAge + 10
+        console.log("Hello currentYear", currentYear)
+        console.log("Hello endYear", endYear)
+
+
+
         const isPortraitMode = window.innerWidth <= 600;
-        // const events = generateEvents(startingAge, isPortraitMode ? startingAge + 10 : 100);
-        const events = generateEvents(startingAge, isPortraitMode ? 100 : 100);
 
+        const events = generateEventsByMonth(data, currentYear, endYear);
 
         // Update data generation logic
         const datasets = this.state.datasets.map((dataset) => ({
@@ -76,8 +51,8 @@ class LineChart extends Component {
             data: events.map((event, index) => {
                 if (event) {
                     return {
-                        x: startingAge + index,
-                        y: event.expense,
+                        x: monthStart + index,
+                        y: event.totalExpense,
                     };
                 }
                 return null;
@@ -85,22 +60,145 @@ class LineChart extends Component {
             events,
         }));
 
-        // Update labels chart
-        const labels = Array.from({ length: 100 - startingAge + 1 }, (_, i) => (i + startingAge) + ' years old');
+        const labels = Array.from({ length: 12 }, (_, i) => {
+            const month = (monthOfBirth + i) % 12 || 12;
+            return month;
+        });
 
         this.setState({
-            birthDate,
-            age,
-            startingAge,
             labels,
             datasets,
             selectedEvent: null,
+            selectedDate: {
+                day: dayOfBirth,
+                month: monthOfBirth,
+                year: yearOfBirth,
+            }
         });
 
-
-        // Update chart style based on window width
         this.handleWindowResize();
     };
+
+    
+    handleMonthChange = (e) => {
+        const birthDate = e.target.value;
+        const selectedDate = new Date(birthDate);
+        const age = calculateAge(birthDate);
+        const monthStart = 1;
+
+        const dayOfBirth = selectedDate.getDate();
+        const monthOfBirth = selectedDate.getMonth() + 1;
+        const yearOfBirth = selectedDate.getFullYear();
+
+        const currentYear = new Date().getFullYear();
+        const targetAge = 100;
+        const endYear = currentYear + (targetAge - age);
+
+        console.log("Hello currentYear", currentYear)
+        console.log("Hello endYear", endYear)
+
+
+
+        const isPortraitMode = window.innerWidth <= 600;
+
+        const events = generateEventsByMonth(data, currentYear, endYear);
+
+        // Update data generation logic
+        const datasets = this.state.datasets.map((dataset) => ({
+            ...dataset,
+            data: events.map((event, index) => {
+                if (event) {
+                    return {
+                        x: monthStart + index,
+                        y: event.totalExpense,
+                    };
+                }
+                return null;
+            }).filter(dataPoint => dataPoint !== null),
+            events,
+        }));
+
+        const labels = Array.from({ length: 12 }, (_, i) => {
+            const month = (monthOfBirth + i) % 12 || 12;
+            return month;
+        });
+
+        this.setState({
+            labels,
+            datasets,
+            selectedEvent: null,
+            selectedDate: {
+                day: dayOfBirth,
+                month: monthOfBirth,
+                year: yearOfBirth,
+            }
+        });
+
+        this.handleWindowResize();
+    };
+
+
+
+    handleYearChange = (e) => {
+        const birthDate = e.target.value;
+        const selectedDate = new Date(birthDate);
+        const age = calculateAge(birthDate);
+        const monthStart = 1;
+
+        const dayOfBirth = selectedDate.getDate();
+        const monthOfBirth = selectedDate.getMonth() + 1;
+        const yearOfBirth = selectedDate.getFullYear();
+
+        const currentYear = new Date().getFullYear();
+        const targetAge = 100;
+        const endYear = currentYear + (targetAge - age);
+
+        console.log("Hello currentYear", currentYear)
+        console.log("Hello endYear", endYear)
+
+
+
+        const isPortraitMode = window.innerWidth <= 600;
+
+        const events = generateEventsByYear(data, age);
+        console.log("hello event", events)
+
+        // Update data generation logic
+        const datasets = this.state.datasets.map((dataset) => ({
+            ...dataset,
+            data: events.map((event, index) => {
+                if (event) {
+                    return {
+                        x: monthStart + index,
+                        y: event.totalExpense,
+                    };
+                }
+                return null;
+            }).filter(dataPoint => dataPoint !== null),
+            events,
+        }));
+
+        const labels = Array.from({ length: 12 }, (_, i) => {
+            const month = (monthOfBirth + i) % 12 || 12;
+            return month;
+        });
+
+        this.setState({
+            labels,
+            datasets,
+            selectedEvent: null,
+            selectedDate: {
+                day: dayOfBirth,
+                month: monthOfBirth,
+                year: yearOfBirth,
+            }
+        });
+
+        this.handleWindowResize();
+    };
+
+
+
 
 
 
@@ -120,26 +218,14 @@ class LineChart extends Component {
         });
     };
 
-    
-
-
-
     componentDidMount() {
-        // Add event listener for window resize
         window.addEventListener('resize', this.handleWindowResize);
-
-        // Initial resize check
         this.handleWindowResize();
     }
 
     componentWillUnmount() {
-        // Remove event listener when component is unmounted
         window.removeEventListener('resize', this.handleWindowResize);
     }
-
-
-
-
 
     // Handle clicks on chart events
     handleEventClick = (event) => {
@@ -154,7 +240,7 @@ class LineChart extends Component {
         const options = {
             xaxis: {
                 title: {
-                    text: 'Age',
+                    text: 'Month',
                 },
             },
             yaxis: {
@@ -168,8 +254,8 @@ class LineChart extends Component {
                     if (selectedEvent) {
                         return `
                             <div class="bg-white border rounded p-4 shadow-md">
-                                <span class="block font-bold">${selectedEvent.description}</span>
-                                <span class="block text-gray-600">Chi tiêu: ${selectedEvent.expense}</span>
+                                <span class="block font-bold">${selectedEvent.month}</span>
+                                <span class="block text-gray-600">Chi tiêu: ${selectedEvent.totalExpense}</span>
                             </div>
                         `;
                     }
@@ -198,6 +284,7 @@ class LineChart extends Component {
                     <ChartControls
                         onChange={this.handleDateChange}
                         birthDate={this.state.birthDate}
+                        filterOption={this.state.birthDate}
                     />
                 </div>
             </div>

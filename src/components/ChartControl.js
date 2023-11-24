@@ -4,7 +4,7 @@ import FilterControl from './FilterControl';
 
 class ChartControls extends Component {
     render() {
-        const { onChange, birthDate } = this.props;
+        const { onChange, birthDate, filterOption } = this.props;
 
         return (
             <div className={`pt-2 bg-white pb-10 flex flex-column items-center justify-center mx-[30px]`}>
@@ -12,7 +12,7 @@ class ChartControls extends Component {
                     <DatePicker id="datepicker" onChange={onChange} birthDate={birthDate} />
                 </div>
                 <div className={`ml-10`}>
-                    <FilterControl id="filter" />
+                    <FilterControl id="filter" onChange={onChange} filterOption={filterOption}/>
                 </div>
             </div>
         );
