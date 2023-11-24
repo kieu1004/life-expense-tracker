@@ -36,10 +36,6 @@ class LineChart extends Component {
         const targetAge = 100;
         const endYear = currentYear + (targetAge - age);
 
-        console.log("Hello currentYear", currentYear)
-        console.log("Hello endYear", endYear)
-
-
 
         const isPortraitMode = window.innerWidth <= 600;
 
@@ -93,10 +89,6 @@ class LineChart extends Component {
         const currentYear = new Date().getFullYear();
         const targetAge = 100;
         const endYear = currentYear + (targetAge - age);
-
-        console.log("Hello currentYear", currentYear)
-        console.log("Hello endYear", endYear)
-
 
 
         const isPortraitMode = window.innerWidth <= 600;
@@ -161,7 +153,6 @@ class LineChart extends Component {
         const isPortraitMode = window.innerWidth <= 600;
 
         const events = generateEventsByYear(data, age);
-        console.log("hello event", events)
 
         // Update data generation logic
         const datasets = this.state.datasets.map((dataset) => ({
