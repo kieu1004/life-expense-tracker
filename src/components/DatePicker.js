@@ -5,7 +5,7 @@ class DatePicker extends Component {
         const { onChange, birthDate } = this.props;
 
         return (
-            <div className={`bg-white items-center justify-center `}>
+            <div className={`bg-white items-center justify-center mx-5`}>
                 <div className="text-l font-bold mb-2">
                     Date of birth
                 </div>

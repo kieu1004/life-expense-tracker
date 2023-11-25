@@ -282,7 +282,7 @@ class LineChart extends Component {
                     type="area"
                 />
 
-                <div className="my-4 flex flex-row justify-around">
+                <div className="my-4 flex flex-row items-center justify-center">
                     <DatePicker
                         onChange={this.handleDateChange}
                         birthDate={this.state.birthDate}

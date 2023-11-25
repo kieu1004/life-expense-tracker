@@ -9,13 +9,13 @@ class FilterControl extends Component {
         ];
 
         return (
-            <div className={`bg-white items-center justify-center`}>
+            <div className={`bg-white items-center justify-center mx-5`}>
                 <div className="text-l font-bold mb-2">
                     Filter
                 </div>
                 <Select
                     options={options}
-                    className="font-normal outline-none bg-white min-w-[150px] md:items-center"
+                    className="font-normal outline-none bg-white min-w-[150px] md:items-center "
                     placeholder="Select filter"
                     onChange={(selectedOption) => this.props.onChange(selectedOption)}
                 />
