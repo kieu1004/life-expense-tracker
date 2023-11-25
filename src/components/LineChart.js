@@ -40,7 +40,7 @@ class LineChart extends Component {
         const yearOfBirth = selectedDate.getFullYear();
 
         const currentYear = new Date().getFullYear();
-        const targetAge = 100;
+        const targetAge = 101;
         const endYear = currentYear + (targetAge - age);
 
         const isPortraitMode = window.innerWidth <= 600;
@@ -103,7 +103,7 @@ class LineChart extends Component {
         const yearOfBirth = selectedDate.getFullYear();
 
         const currentYear = new Date().getFullYear();
-        const targetAge = 100;
+        const targetAge = 101;
         const endYear = currentYear + (targetAge - age);
 
 
@@ -216,7 +216,7 @@ class LineChart extends Component {
         const options = {
             xaxis: {
                 title: {
-                    text: this.state.filterOption === 'month' ? 'Month' : 'Year',
+                    text: this.state.filterOption === 'month' ? 'Month' : 'Age',
                 },
             },
             yaxis: {
@@ -227,21 +227,42 @@ class LineChart extends Component {
             tooltip: {
                 custom: ({ series, seriesIndex, dataPointIndex }) => {
                     const selectedEvent = this.state.datasets[seriesIndex].events[dataPointIndex];
+
                     if (selectedEvent) {
+                        let label = '';
+
+                        if (this.state.filterOption === 'month') {
+                            label = `Tháng: ${selectedEvent.month + 1}`;
+                        } else if (this.state.filterOption === 'year') {
+                            label = `Năm: ${selectedEvent.year}`;
+                        }
+
                         return `
                             <div class="bg-white border rounded p-4 shadow-md">
-                                <span class="block font-bold">${selectedEvent.month}</span>
-                                <span class="block text-gray-600">Chi tiêu: ${selectedEvent.totalExpense}</span>
+                                <span class="block font-bold">${label}</span>
+                                <span class="block text-gray-600">Chi tiêu dự kiến: ${selectedEvent.totalExpense}</span>
                             </div>
                         `;
                     }
+
                     return '';
                 },
             },
             colors: ['#04D0A9'],
             fill: {
                 type: 'gradient',
-            }
+            },
+            responsive: [
+                {
+                    breakpoint: 300,
+                    options: {
+                        chart: {
+                            width: '100%',
+                            height: '100%',
+                        },
+                    },
+                },
+            ],
         };
 
         return (
@@ -269,6 +290,7 @@ class LineChart extends Component {
                         filterOption={this.state.filterOption}
                     />
                 </div>
+                <div className='flex text-xs items-center justify-center mb-10'>{`*limit the generated random data [1000 - 2100]`}</div>
             </div>
         );
     }

@@ -2706,6 +2706,7 @@
 // ];
 
 // Calculate age by birthday
+
 export function calculateAge(birthday) {
 
     const today = new Date();
@@ -2740,7 +2741,7 @@ export function generateEventsByYear(data, age) {
     const events = [];
 
     const currentYear = new Date().getFullYear();
-    const targetAge = 100;
+    const targetAge = 101;
     const endYear = currentYear + (targetAge - age);
 
     for (let i = 0; i < endYear; i++) {
