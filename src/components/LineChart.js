@@ -1,7 +1,8 @@
 import { h, Component } from 'preact';
 import ReactApexChart from 'react-apexcharts';
 import { calculateAge, data, generateEventsByMonth, generateEventsByYear } from '../utils/data'
-import ChartControls from './ChartControl';
+import DatePicker from './DatePicker';
+import FilterControl from './FilterControl';
 
 class LineChart extends Component {
 
@@ -18,6 +19,8 @@ class LineChart extends Component {
                 },
             ],
             selectedEvent: null,
+            birthDate: null,
+            filterOption: null,
             chartStyle: {},
         };
     }
@@ -65,6 +68,7 @@ class LineChart extends Component {
             labels,
             datasets,
             selectedEvent: null,
+            birthDate: selectedDate,
             selectedDate: {
                 day: dayOfBirth,
                 month: monthOfBirth,
@@ -75,7 +79,7 @@ class LineChart extends Component {
         this.handleWindowResize();
     };
 
-    
+
     handleMonthChange = (e) => {
         const birthDate = e.target.value;
         const selectedDate = new Date(birthDate);
@@ -145,14 +149,12 @@ class LineChart extends Component {
         const targetAge = 100;
         const endYear = currentYear + (targetAge - age);
 
-        console.log("Hello currentYear", currentYear)
-        console.log("Hello endYear", endYear)
-
 
 
         const isPortraitMode = window.innerWidth <= 600;
 
         const events = generateEventsByYear(data, age);
+
 
         // Update data generation logic
         const datasets = this.state.datasets.map((dataset) => ({
@@ -186,6 +188,15 @@ class LineChart extends Component {
         });
 
         this.handleWindowResize();
+    };
+
+    handleFilterChange = (selectedOption) => {
+        const selectedFilter = selectedOption ? selectedOption.value : null;
+        if (selectedFilter === 'month') {
+            this.handleMonthChange({ target: { value: this.state.birthDate } });
+        } else if (selectedFilter === 'year') {
+            this.handleYearChange({ target: { value: this.state.birthDate } });
+        }
     };
 
 
@@ -271,11 +282,15 @@ class LineChart extends Component {
                     type="area"
                 />
 
-                <div className="mt-4">
-                    <ChartControls
+                <div className="my-4 flex flex-row justify-around">
+                    <DatePicker
                         onChange={this.handleDateChange}
                         birthDate={this.state.birthDate}
-                        filterOption={this.state.birthDate}
+                    />
+                    <FilterControl
+                        id="filter"
+                        onChange={this.handleFilterChange}
+                        filterOption={this.state.filterOption}
                     />
                 </div>
             </div>
