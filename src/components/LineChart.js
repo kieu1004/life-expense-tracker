@@ -1,8 +1,10 @@
 import { h, Component } from 'preact';
 import ReactApexChart from 'react-apexcharts';
-import { calculateAge, data, generateEventsByMonth, generateEventsByYear } from '../utils/data'
+import { calculateAge, generateEventsByMonth, generateEventsByYear, generateRandomExpenseData } from '../utils/data'
 import DatePicker from './DatePicker';
 import FilterControl from './FilterControl';
+
+const randomExpenseData = generateRandomExpenseData(1000, 2100);
 
 class LineChart extends Component {
 
@@ -20,64 +22,11 @@ class LineChart extends Component {
             ],
             selectedEvent: null,
             birthDate: null,
-            filterOption: null,
+            filterOption: 'year',
             chartStyle: {},
         };
     }
 
-    handleDateChange = (e) => {
-        const birthDate = e.target.value;
-        const selectedDate = new Date(birthDate);
-        const age = calculateAge(birthDate);
-        const monthStart = 1;
-
-        const dayOfBirth = selectedDate.getDate();
-        const monthOfBirth = selectedDate.getMonth() + 1;
-        const yearOfBirth = selectedDate.getFullYear();
-
-        const currentYear = new Date().getFullYear();
-        const targetAge = 100;
-        const endYear = currentYear + (targetAge - age);
-
-
-        const isPortraitMode = window.innerWidth <= 600;
-
-        const events = generateEventsByMonth(data, currentYear, endYear);
-
-        // Update data generation logic
-        const datasets = this.state.datasets.map((dataset) => ({
-            ...dataset,
-            data: events.map((event, index) => {
-                if (event) {
-                    return {
-                        x: monthStart + index,
-                        y: event.totalExpense,
-                    };
-                }
-                return null;
-            }).filter(dataPoint => dataPoint !== null),
-            events,
-        }));
-
-        const labels = Array.from({ length: 12 }, (_, i) => {
-            const month = (monthOfBirth + i) % 12 || 12;
-            return month;
-        });
-
-        this.setState({
-            labels,
-            datasets,
-            selectedEvent: null,
-            birthDate: selectedDate,
-            selectedDate: {
-                day: dayOfBirth,
-                month: monthOfBirth,
-                year: yearOfBirth,
-            }
-        });
-
-        this.handleWindowResize();
-    };
 
 
     handleMonthChange = (e) => {
@@ -94,10 +43,17 @@ class LineChart extends Component {
         const targetAge = 100;
         const endYear = currentYear + (targetAge - age);
 
-
         const isPortraitMode = window.innerWidth <= 600;
 
-        const events = generateEventsByMonth(data, currentYear, endYear);
+        const events = generateEventsByMonth(randomExpenseData, currentYear, endYear);
+
+        console.log('Hello dayOfBirth', dayOfBirth)
+        console.log('Hello monthOfBirth', monthOfBirth)
+        console.log('Hello yearOfBirth', yearOfBirth)
+        console.log('Hello currentYear', currentYear)
+        console.log('Hello endYear', endYear)
+        console.log('Hello events', events)
+
 
         // Update data generation logic
         const datasets = this.state.datasets.map((dataset) => ({
@@ -123,6 +79,7 @@ class LineChart extends Component {
             labels,
             datasets,
             selectedEvent: null,
+            birthDate: e.target.value,
             selectedDate: {
                 day: dayOfBirth,
                 month: monthOfBirth,
@@ -153,7 +110,17 @@ class LineChart extends Component {
 
         const isPortraitMode = window.innerWidth <= 600;
 
-        const events = generateEventsByYear(data, age);
+        const events = generateEventsByYear(randomExpenseData, age);
+
+
+
+        console.log('Hello dayOfBirth', dayOfBirth)
+        console.log('Hello monthOfBirth', monthOfBirth)
+        console.log('Hello yearOfBirth', yearOfBirth)
+        console.log('Hello age', age)
+        console.log('Hello currentYear', currentYear)
+        console.log('Hello endYear', endYear)
+        console.log('Hello events', events)
 
 
         // Update data generation logic
@@ -162,7 +129,7 @@ class LineChart extends Component {
             data: events.map((event, index) => {
                 if (event) {
                     return {
-                        x: monthStart + index,
+                        x: age + index,
                         y: event.totalExpense,
                     };
                 }
@@ -180,11 +147,12 @@ class LineChart extends Component {
             labels,
             datasets,
             selectedEvent: null,
+            birthDate: e.target.value,
             selectedDate: {
                 day: dayOfBirth,
                 month: monthOfBirth,
                 year: yearOfBirth,
-            }
+            },
         });
 
         this.handleWindowResize();
@@ -192,6 +160,8 @@ class LineChart extends Component {
 
     handleFilterChange = (selectedOption) => {
         const selectedFilter = selectedOption ? selectedOption.value : null;
+        this.setState({ filterOption: selectedFilter });
+
         if (selectedFilter === 'month') {
             this.handleMonthChange({ target: { value: this.state.birthDate } });
         } else if (selectedFilter === 'year') {
@@ -205,17 +175,20 @@ class LineChart extends Component {
 
 
 
+
     // Handle window resize
     handleWindowResize = () => {
-        const isPortraitMode = window.innerWidth <= 600;
-        const additionalWidth = isPortraitMode ? 50 : 0;
+        const isPortraitMode = window.innerWidth <= 200;
+        const additionalWidth = isPortraitMode ? 200 : 0;
+        console.log("Hello isPortraitMode", isPortraitMode)
+        console.log("Hello additionalWidth", additionalWidth)
 
         // Update chart style
         this.setState({
             chartStyle: {
                 width: `calc(100% + ${additionalWidth}px)`,
                 height: `calc(100% + ${additionalWidth}px)`,
-                // backgroundColor: isPortraitMode ? '#FF0000' : 'transparent',
+                backgroundColor: isPortraitMode ? '#FF0000' : 'transparent',
             }
         });
     };
@@ -239,10 +212,11 @@ class LineChart extends Component {
 
 
     render() {
+        console.log("this.state.filterOption", this.state.filterOption)
         const options = {
             xaxis: {
                 title: {
-                    text: 'Month',
+                    text: this.state.filterOption === 'month' ? 'Month' : 'Year',
                 },
             },
             yaxis: {
@@ -284,9 +258,11 @@ class LineChart extends Component {
 
                 <div className="my-4 flex flex-row items-center justify-center">
                     <DatePicker
-                        onChange={this.handleDateChange}
+                        onChange={this.handleYearChange}
                         birthDate={this.state.birthDate}
                     />
+
+
                     <FilterControl
                         id="filter"
                         onChange={this.handleFilterChange}

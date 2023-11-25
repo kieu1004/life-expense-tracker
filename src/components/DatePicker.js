@@ -12,9 +12,9 @@ class DatePicker extends Component {
                 <input
                     type="date"
                     className="border border-gray-300 p-2 rounded font-normal outline-none bg-white"
-                    onChange={onChange}
                     placeholder="Select a date"
                     value={birthDate}
+                    onChange={(e) => onChange(e)}
                 />
             </div>
         );
@@ -22,3 +22,4 @@ class DatePicker extends Component {
 }
 
 export default DatePicker;
+
