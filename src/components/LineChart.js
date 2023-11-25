@@ -4,7 +4,7 @@ import { calculateAge, generateEventsByMonth, generateEventsByYear, generateRand
 import DatePicker from './DatePicker';
 import FilterControl from './FilterControl';
 
-const randomExpenseData = generateRandomExpenseData(1000, 2100);
+const randomExpenseData = generateRandomExpenseData(1000, 2500);
 
 class LineChart extends Component {
 
