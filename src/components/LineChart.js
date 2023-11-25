@@ -43,7 +43,7 @@ class LineChart extends Component {
         const targetAge = 101;
         const endYear = currentYear + (targetAge - age);
 
-        const isPortraitMode = window.innerWidth <= 600;
+        const isPortraitMode = window.innerWidth <= 250;
 
         const events = generateEventsByMonth(randomExpenseData, currentYear, endYear);
 
@@ -108,7 +108,7 @@ class LineChart extends Component {
 
 
 
-        const isPortraitMode = window.innerWidth <= 600;
+        const isPortraitMode = window.innerWidth <= 250;
 
         const events = generateEventsByYear(randomExpenseData, age);
 
@@ -178,8 +178,9 @@ class LineChart extends Component {
 
     // Handle window resize
     handleWindowResize = () => {
-        const isPortraitMode = window.innerWidth <= 200;
-        const additionalWidth = isPortraitMode ? 200 : 0;
+        const isPortraitMode = window.innerWidth <= 250;
+        const additionalWidth = isPortraitMode ? 0 : 0;
+        const additionalHeight = isPortraitMode ? 0 : 0;
         console.log("Hello isPortraitMode", isPortraitMode)
         console.log("Hello additionalWidth", additionalWidth)
 
@@ -187,7 +188,7 @@ class LineChart extends Component {
         this.setState({
             chartStyle: {
                 width: `calc(100% + ${additionalWidth}px)`,
-                height: `calc(100% + ${additionalWidth}px)`,
+                height: `calc(100% + ${additionalHeight}px)`,
                 backgroundColor: isPortraitMode ? '#FF0000' : 'transparent',
             }
         });
@@ -212,6 +213,7 @@ class LineChart extends Component {
 
 
     render() {
+        const isPortraitMode = window.innerWidth <= 250;
         console.log("this.state.filterOption", this.state.filterOption)
         const options = {
             xaxis: {
@@ -265,22 +267,42 @@ class LineChart extends Component {
             ],
         };
 
+
+        const chartWidth = isPortraitMode ? '100%' : '120%';
+        const chartHeight = isPortraitMode ? '100%' : '100%';
+
+        const chartContainerStyle = {
+            width: chartWidth,
+            height: chartHeight,
+            overflow: 'auto',
+            maxWidth: '100%',
+            maxHeight: '80vh',
+            margin: 'auto',
+        };
+
         return (
-            <div style={this.state.chartStyle}>
-                <ReactApexChart
-                    options={options}
-                    series={
-                        this.state.selectedEvent
-                            ? [{ data: this.state.selectedEvent.expense }]
-                            : this.state.datasets
-                    }
-                    type="area"
-                />
+            <div className="h-screen w-screen flex flex-col">
+                <div style={this.state.chartStyle}>
+                    <div style={chartContainerStyle}>
+                        <ReactApexChart
+                            options={options}
+                            series={
+                                this.state.selectedEvent
+                                    ? [{ data: this.state.selectedEvent.expense }]
+                                    : this.state.datasets
+                            }
+                            type="area"
+                            width={chartWidth}
+                            height={chartHeight}
+                        />
+                    </div>
+                </div>
 
                 <div className="my-4 flex flex-row items-center justify-center">
                     <DatePicker
                         onChange={this.handleYearChange}
                         birthDate={this.state.birthDate}
+                        className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 mb-4 sm:mb-0"
                     />
 
 
@@ -288,9 +310,10 @@ class LineChart extends Component {
                         id="filter"
                         onChange={this.handleFilterChange}
                         filterOption={this.state.filterOption}
+                        className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5"
                     />
                 </div>
-                <div className='flex text-xs text-purple-500 items-center justify-center mb-10'>{`*limit the generated random data [1000 - 2100]`}</div>
+                <div className='flex text-xs text-purple-500 items-center justify-center mb-18'>{`*limit the generated random data [1000 - 2100]`}</div>
             </div>
         );
     }
