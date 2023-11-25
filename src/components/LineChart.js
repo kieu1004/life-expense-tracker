@@ -232,15 +232,15 @@ class LineChart extends Component {
                         let label = '';
 
                         if (this.state.filterOption === 'month') {
-                            label = `Tháng: ${selectedEvent.month + 1}`;
+                            label = `Month: ${selectedEvent.month + 1}`;
                         } else if (this.state.filterOption === 'year') {
-                            label = `Năm: ${selectedEvent.year}`;
+                            label = `Year: ${selectedEvent.year}`;
                         }
 
                         return `
                             <div class="bg-white border rounded p-4 shadow-md">
                                 <span class="block font-bold">${label}</span>
-                                <span class="block text-gray-600">Chi tiêu dự kiến: ${selectedEvent.totalExpense}</span>
+                                <span class="block text-gray-600">Expense: ${selectedEvent.totalExpense}</span>
                             </div>
                         `;
                     }
@@ -248,7 +248,7 @@ class LineChart extends Component {
                     return '';
                 },
             },
-            colors: ['#04D0A9'],
+            colors: ['#9370DB'],
             fill: {
                 type: 'gradient',
             },
@@ -290,7 +290,7 @@ class LineChart extends Component {
                         filterOption={this.state.filterOption}
                     />
                 </div>
-                <div className='flex text-xs items-center justify-center mb-10'>{`*limit the generated random data [1000 - 2100]`}</div>
+                <div className='flex text-xs text-purple-500 items-center justify-center mb-10'>{`*limit the generated random data [1000 - 2100]`}</div>
             </div>
         );
     }

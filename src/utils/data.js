@@ -2726,10 +2726,10 @@ export function calculateAge(birthday) {
 export function calculateTotalExpensesByYear(data, selectedYear) {
     const yearData = data.find(item => item.year === selectedYear);
 
-    if (!yearData) {
-        console.log(`Không tìm thấy dữ liệu của năm ${selectedYear}`);
-        return null;
-    }
+    // if (!yearData) {
+    //     console.log(`Không tìm thấy dữ liệu của năm ${selectedYear}`);
+    //     return null;
+    // }
     const totalExpenseForYear = yearData.detail.reduce((sum, month) => sum + month.expense, 0);
 
     return totalExpenseForYear;
@@ -2754,7 +2754,7 @@ export function generateEventsByYear(data, age) {
             const event = { year: iYear, totalExpense: totalExpenseForYear };
             events.push(event);
         } else {
-            console.log(`Không tìm thấy dữ liệu của năm ${iYear}`);
+            // console.log(`Không tìm thấy dữ liệu của năm ${iYear}`);
         }
     }
 
@@ -2776,7 +2776,7 @@ export function generateEventsByMonth(data, startYear, endYear) {
                 events[monthIndex].totalExpense += month.expense;
             });
         } else {
-            console.log(`Không tìm thấy dữ liệu của năm ${year}`);
+            // console.log(`Không tìm thấy dữ liệu của năm ${year}`);
         }
     }
 
