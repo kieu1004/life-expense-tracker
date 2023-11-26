@@ -189,7 +189,7 @@ class LineChart extends Component {
             chartStyle: {
                 width: `calc(100% + ${additionalWidth}px)`,
                 height: `calc(100% + ${additionalHeight}px)`,
-                backgroundColor: isPortraitMode ? '#FF0000' : 'transparent',
+                // backgroundColor: isPortraitMode ? '#FF0000' : 'transparent',
             }
         });
     };
