@@ -178,9 +178,9 @@ class LineChart extends Component {
 
     // Handle window resize
     handleWindowResize = () => {
-        const isPortraitMode = window.innerWidth <= 250;
-        const additionalWidth = isPortraitMode ? 0 : 0;
-        const additionalHeight = isPortraitMode ? 0 : 0;
+        const isPortraitMode = window.innerWidth <= 500;
+        const additionalWidth = isPortraitMode ? 50 : 0;
+        const additionalHeight = isPortraitMode ? 50 : 0;
         console.log("Hello isPortraitMode", isPortraitMode)
         console.log("Hello additionalWidth", additionalWidth)
 
