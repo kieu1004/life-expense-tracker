@@ -268,7 +268,7 @@ class LineChart extends Component {
         };
 
 
-        const chartWidth = isPortraitMode ? '100%' : '200%';
+        const chartWidth = isPortraitMode ? '100%' : '180%';
         const chartHeight = isPortraitMode ? '100%' : '100%';
 
         const chartContainerStyle = {
